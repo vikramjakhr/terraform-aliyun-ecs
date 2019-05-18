@@ -15,24 +15,31 @@ Usage
 Use below snippet in tf file to create a new ECS instance.
 
 ```
-module "bastion_host" {
+
+locals {
+  common_tags = {
+    "Env" = "your_env_here"
+  }
+}
+
+module "aliyun_ecs" {
   source = "./modules/ecs"
 
-  instance_name    = "${var.bastion["instance_name"]}"
-  host_name        = "${var.bastion["host_name"]}"
-  key_name         = "${module.key_pair.key_name}"
-  vswitch_id       = "${module.aliyun_vpc.misc_vswitch_az_a_id}"
-  role_name        = "${module.ecs_rame_role.role_name}"
-  system_disk_size = "${var.bastion["system_disk_size"]}"
+  instance_name    = "instance_name"
+  host_name        = "host_name"
+  key_name         = "key_pair.key_name"
+  vswitch_id       = "vswitch_id"
+  role_name        = "ecs_rame_role.role_name"
+  system_disk_size = "system_disk_size"
 
   security_groups = [
-    "${alicloud_security_group.bastion_security_group.id}",
+    "${alicloud_security_group.security_group.id}",
   ]
 
   tags = "${merge(
         "${local.common_tags}",
         map(
-            "Name" ,  "${var.bastion["instance_name"]}"
+            "Name" ,  "instance_name"
         )
     )}"
 }
